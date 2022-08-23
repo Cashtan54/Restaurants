@@ -2,7 +2,6 @@ import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import User, Restaurant, Vote
 
 
 class Settings(TestCase):
@@ -28,6 +27,7 @@ class CreateRestTest(Settings):
             HTTP_AUTHORIZATION=f'Bearer {self.access_token}',
             follow=True,
         )
+        print(rest)
 
     def test_rests_list(self):
         rests = self.client.get(

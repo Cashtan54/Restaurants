@@ -2,3 +2,4 @@
 /.idea/
 /config/.env
 db.sqlite3
+/version_1/static

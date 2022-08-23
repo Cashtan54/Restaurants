@@ -20,14 +20,6 @@ class RestaurantApiView(ModelViewSet):
     serializer_class = RestaurantSerializer
     permission_classes = (IsAuthenticated,)
 
-    def list(self, request):
-        restaurants = Restaurant.objects.all()
-        return Response(RestaurantSerializer(restaurants, many=True).data)
-
-    def retrive(self, request):
-        restaurant = Restaurant.objects.get(name=request.data['name'])
-        return Response({'restaraunt': RestaurantSerializer(restaurant).data})
-
     def create(self, request):
         data = {
             'name': request.data['name'],
@@ -35,18 +27,14 @@ class RestaurantApiView(ModelViewSet):
         restaurant = Restaurant.objects.create(name=data['name'], owner=request.user)
         return Response({'restaurant_created': RestaurantSerializer(restaurant).data})
 
-    def patch(self, request, pk):
-        data = {
-            'menu_as_link': request.data['menu_as_link'],
-        }
+    def partial_update(self, request, pk):
         restaurant = Restaurant.objects.get(pk=pk)
         if restaurant.owner == request.user:
-            restaurant.menu_as_link = data['menu_as_link']
+            restaurant.menu_as_link = request.data['menu_as_link']
             restaurant.save()
-            restaurant.refresh_from_db()
-            return Response({'restaurant_updated': RestaurantSerializer(restaurant).data})
+            return Response(RestaurantSerializer(restaurant).data)
         else:
-            return Response({'status': 'You are not the owner of restaurant'}, status=403)
+            return Response({'error': 'You are not the owner of this restourant'}, status=200)
 
 
 class VoteAPIView(ModelViewSet):
@@ -66,4 +54,3 @@ class VoteAPIView(ModelViewSet):
             return Response({'voted': VoteSerializer(vote).data})
         except IntegrityError:
             return Response({'status': 'Already voted'}, status=200)
-
