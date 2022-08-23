@@ -27,7 +27,15 @@ class CreateRestTest(Settings):
             HTTP_AUTHORIZATION=f'Bearer {self.access_token}',
             follow=True,
         )
-        print(rest)
+        print(rest.content)
+        rest1 = self.client.post(
+            reverse('restaraunt-list'),
+            format='json',
+            data={'name': 'TestRest1'},
+            HTTP_AUTHORIZATION=f'Bearer {self.access_token}',
+            follow=True,
+        )
+        print(rest1.content)
 
     def test_rests_list(self):
         rests = self.client.get(
@@ -36,6 +44,7 @@ class CreateRestTest(Settings):
             HTTP_AUTHORIZATION=f'Bearer {self.access_token}',
             follow=True,
         )
+        print('hi')
         print(rests.content)
 
     def test_vote(self):

@@ -24,8 +24,11 @@ class RestaurantApiView(ModelViewSet):
         data = {
             'name': request.data['name'],
         }
-        restaurant = Restaurant.objects.create(name=data['name'], owner=request.user)
-        return Response({'restaurant_created': RestaurantSerializer(restaurant).data})
+        try:
+            restaurant = Restaurant.objects.create(name=data['name'], owner=request.user)
+            return Response(RestaurantSerializer(restaurant).data)
+        except IntegrityError:
+            return Response({'status': 'Restaurant with this name already exist'}, status=200)
 
     def partial_update(self, request, pk):
         restaurant = Restaurant.objects.get(pk=pk)
