@@ -3,10 +3,6 @@ from django.db import models
 from django.conf import settings
 
 
-def save_restaurant_menu(instanse, filename):
-    return f'{instanse.name}.{filename.split(".")[-1]}'
-
-
 class User(AbstractUser):
 
     def __str__(self):
@@ -16,7 +12,6 @@ class User(AbstractUser):
 class Restaurant(models.Model):
     name = models.CharField(max_length=255, unique=True)
     menu_as_link = models.CharField(max_length=255, blank=True, null=True)
-    menu_as_file = models.FileField(blank=True, null=True, upload_to=save_restaurant_menu)
     last_update = models.DateField(auto_now=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='restaurants', on_delete=models.CASCADE)
 
@@ -29,5 +24,8 @@ class Vote(models.Model):
     restaurant = models.ForeignKey(Restaurant, related_name='votes', on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
 
+    def __str__(self):
+        return f'{self.user} > {self.restaurant} {self.date}'
+
     class Meta:
-        unique_together = ('user', 'restaurant', 'date')
+        unique_together = ('user', 'date')

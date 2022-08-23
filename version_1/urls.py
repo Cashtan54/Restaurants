@@ -1,8 +1,12 @@
 from django.urls import path, include
-from .views import RestaurantApiView
+from rest_framework import routers
 
+from .views import RestaurantApiView, VoteAPIView
+
+router = routers.DefaultRouter()
+router.register('restaurant', RestaurantApiView, basename='restaraunt')
+router.register('vote', VoteAPIView, basename='vote')
 
 urlpatterns = [
-    path('restaurant/', RestaurantApiView.as_view(), name='restaraunt'),
-
+    path('', include(router.urls)),
 ]

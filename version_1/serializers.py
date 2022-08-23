@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from .models import User, Restaurant
+from .models import User, Restaurant, Vote
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -33,7 +33,18 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    owner = serializers.CharField(source='owner.username')
 
     class Meta:
         model = Restaurant
+        fields = '__all__'
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
+    restaurant = serializers.CharField(source='restaurant.name')
+    date = serializers.DateField()
+
+    class Meta:
+        model = Vote
         fields = '__all__'
